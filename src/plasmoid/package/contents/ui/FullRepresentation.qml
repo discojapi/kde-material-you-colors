@@ -331,7 +331,7 @@ ColumnLayout {
                     level: 1
                     text: Plasmoid.metaData.name
                 }
-                // Button to fetch the colors on screen //
+                // Button to manually fetch the colors on screen //
                 PlasmaComponents3.ToolButton {
                     display: PlasmaComponents3.AbstractButton.IconOnly
                     visible: !onDesktop
@@ -1933,6 +1933,35 @@ ColumnLayout {
                                     }
                                 }
                             }
+                            RowLayout {
+                                PlasmaComponents3.Label {
+                                    text: "Manual color fetch only"
+                                    Layout.alignment: Qt.AlignLeft
+                                }
+
+                                PlasmaComponents3.CheckBox {
+                                    checked: settings.screenshot_only_mode
+
+                                    onCheckedChanged: {
+                                        settings.screenshot_only_mode = checked
+                                    }
+                                }
+
+                                PlasmaComponents3.ToolButton {
+                                    icon.name: "help-contents"
+
+                                    hoverEnabled: true
+                                    onClicked: manualFetchPopup.open()
+
+                                    PlasmaComponents3.ToolTip {
+                                        id: manualFetchPopup
+                                        x: parent.width / 2
+                                        y: parent.height
+                                        text: "The backend won't fetch the colors in the delay times, instead, it will fetch only when the 'fetch colors' button is pressed by the user."
+                                    }
+                                }
+                            }
+
 
                             RowLayout {
                                 PlasmaComponents3.Label {
