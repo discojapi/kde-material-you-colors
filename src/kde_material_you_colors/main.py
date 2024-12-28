@@ -341,6 +341,12 @@ def main():
         default=None,
         metavar="<string>",
     )
+    parser.add_argument(
+        "--manual-fetch",
+        action="store_true",
+        help="Dissables automatic color fetching",
+        default=None,
+    )
 
     # Get commandline arguments
     args = parser.parse_args()
@@ -426,7 +432,6 @@ def main():
             first_run = False if first_run else True
             continue
 
-        #
         #
         #
         #

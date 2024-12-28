@@ -59,7 +59,10 @@ ColumnLayout {
 
     property bool pauseMode: false
 
+    property bool fetch_colors: false
+
     signal savePauseMode()
+
 
     property Item parentMain
 
@@ -82,7 +85,6 @@ ColumnLayout {
             parentMain.pauseModeMain = fullRepresentation.pauseMode
         }
     }
-
 
     // Get a list of installed icon themes as id,name
     // - discard hidden themes
@@ -331,21 +333,6 @@ ColumnLayout {
                     level: 1
                     text: Plasmoid.metaData.name
                 }
-                // Button to manually fetch the colors on screen //
-                PlasmaComponents3.ToolButton {
-                    display: PlasmaComponents3.AbstractButton.IconOnly
-                    visible: !onDesktop
-                    icon.name: 'refreshstructure'
-                    text: 'Manually fetch the colors'
-
-                    onClicked: {
-                        plasmoid.internalAction("configure").trigger()
-                    }
-                    PlasmaComponents3.ToolTip {
-                        text: parent.text
-                    }
-                }
-
                 PlasmaComponents3.ToolButton {
                     display: PlasmaComponents3.AbstractButton.IconOnly
                     visible: !onDesktop
@@ -360,7 +347,6 @@ ColumnLayout {
                         text: parent.text
                     }
                 }
-
                 PlasmaComponents3.ToolButton {
                     display: PlasmaComponents3.AbstractButton.IconOnly
                     checkable: false
@@ -466,14 +452,12 @@ ColumnLayout {
                                 }
                             }
                         }
-
                         Connections {
                             target: fullRepresentation
                             function onSavePauseMode() {
                                 settings.pause_mode = fullRepresentation.pauseMode
                             }
                         }
-
                         onMaterialYouDataChanged: {
                             if (materialYouData!=null && materialYouDataString!=null) {
                                 if (JSON.stringify(materialYouData) !== materialYouDataString) {
@@ -558,6 +542,8 @@ ColumnLayout {
                                     property int screenshot_delay: 900; \
                                     property bool once_after_change: false; \
                                     property bool pause_mode: false; \
+                                    property bool manual_fetch: false; \
+                                    property bool fetch_colors: false; \
                                     property bool screenshot_only_mode: false; \
                                     property int scheme_variant: 5; \
                                     property real chroma_multiplier: 1.0; \
@@ -762,6 +748,31 @@ ColumnLayout {
                                     }
                                 }
 
+                            }
+
+                            // Button to manually fetch the colors on screen //
+                            Timer {
+                                id: fetchTimer
+                                interval: settings.main_loop_delay * 1200; running: false; repeat: false;
+                                onTriggered: settings.fetch_colors = false
+                            }
+                            RowLayout {
+                                PlasmaComponents3.Button {
+                                    text: "Fetch colors"
+                                    icon.name: 'refreshstructure'
+                                    onClicked: {
+                                        settings.fetch_colors = true
+                                        fetchTimer.start()
+                                    }
+                                    PlasmaComponents3.ToolTip {
+                                        text: "Manually fetch the colors on the current wallpaper"
+                                    }
+                                }
+                                PlasmaComponents3.CheckBox {
+                                    onCheckedChanged: {
+                                        settings.fetch_colors = checked
+                                    }
+                                }
                             }
 
                             RowLayout {
@@ -1940,10 +1951,11 @@ ColumnLayout {
                                 }
 
                                 PlasmaComponents3.CheckBox {
-                                    checked: settings.screenshot_only_mode
+                                    checked: settings.manual_fetch
 
                                     onCheckedChanged: {
-                                        settings.screenshot_only_mode = checked
+                                        settings.manual_fetch = checked
+                                        fullRepresentation.manual_fetch = checked
                                     }
                                 }
 
