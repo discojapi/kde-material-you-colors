@@ -61,6 +61,8 @@ ColumnLayout {
 
     signal savePauseMode()
 
+    signal fetchColors()
+
     property Item parentMain
 
     KCoreAddons.KUser {
@@ -334,12 +336,12 @@ ColumnLayout {
                 // Button to manually fetch the colors on screen //
                 PlasmaComponents3.ToolButton {
                     display: PlasmaComponents3.AbstractButton.IconOnly
-                    visible: !onDesktop
+                    id: fetchBtn
                     icon.name: 'refreshstructure'
                     text: 'Manually fetch the colors'
 
                     onClicked: {
-                        plasmoid.internalAction("configure").trigger()
+                        fetchColors()
                     }
                     PlasmaComponents3.ToolTip {
                         text: parent.text
@@ -469,6 +471,12 @@ ColumnLayout {
 
                         Connections {
                             target: fullRepresentation
+                            function onFetchColors() {
+                                settings.fetch_colors = 1
+                            }
+                        }
+                        Connections {
+                            target: fullRepresentation
                             function onSavePauseMode() {
                                 settings.pause_mode = fullRepresentation.pauseMode
                             }
@@ -558,6 +566,8 @@ ColumnLayout {
                                     property int screenshot_delay: 900; \
                                     property bool once_after_change: false; \
                                     property bool pause_mode: false; \
+                                    property bool manual_fetch: false; \
+                                    property bool fetch_colors: false; \
                                     property bool screenshot_only_mode: false; \
                                     property int scheme_variant: 5; \
                                     property real chroma_multiplier: 1.0; \
@@ -1940,10 +1950,10 @@ ColumnLayout {
                                 }
 
                                 PlasmaComponents3.CheckBox {
-                                    checked: settings.screenshot_only_mode
+                                    checked: settings.manual_fetch
 
                                     onCheckedChanged: {
-                                        settings.screenshot_only_mode = checked
+                                        settings.manual_fetch = checked
                                     }
                                 }
 
