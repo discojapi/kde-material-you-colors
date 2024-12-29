@@ -441,7 +441,6 @@ ColumnLayout {
                         property string doSettingsReload: fullRepresentation.doSettingsReload
                         property bool showAdvanced: fullRepresentation.showAdvanced
                         property bool pauseMode: fullRepresentation.pauseMode
-                        property bool fetch_colors: fullRepresentation.fetch_colors
 
                         onDoSettingsReloadChanged: {
                             if (doSettingsReload) {
@@ -754,19 +753,24 @@ ColumnLayout {
                             // Button to manually fetch the colors on screen //
                             Timer {
                                 id: fetchTimer
-                                interval: fullRepresentation.main_loop_delay; running: false; repeat: false;
-                                onTriggered: settings.fetch_colors = 0
+                                interval: settings.main_loop_delay * 1200; running: false; repeat: false;
+                                onTriggered: settings.fetch_colors = false
                             }
                             RowLayout {
                                 PlasmaComponents3.Button {
                                     text: "Fetch colors"
                                     icon.name: 'refreshstructure'
                                     onClicked: {
-                                        settings.fetch_colors = 1
+                                        settings.fetch_colors = true
                                         fetchTimer.start()
                                     }
                                     PlasmaComponents3.ToolTip {
                                         text: "Manually fetch the colors on the current wallpaper"
+                                    }
+                                }
+                                PlasmaComponents3.CheckBox {
+                                    onCheckedChanged: {
+                                        settings.fetch_colors = checked
                                     }
                                 }
                             }
@@ -1951,6 +1955,7 @@ ColumnLayout {
 
                                     onCheckedChanged: {
                                         settings.manual_fetch = checked
+                                        fullRepresentation.manual_fetch = checked
                                     }
                                 }
 

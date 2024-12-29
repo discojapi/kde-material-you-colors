@@ -342,7 +342,7 @@ def main():
         metavar="<string>",
     )
     parser.add_argument(
-        "--manual_fetch",
+        "--manual-fetch",
         action="store_true",
         help="Dissables automatic color fetching",
         default=None,
@@ -394,7 +394,6 @@ def main():
     plugin_watcher = utils.Watcher(wallpaper.plugin)
     source_watcher = utils.Watcher(wallpaper.source)
     pause_watcher = utils.Watcher(config.read("pause_mode"))
-    fetch_watcher = utils.Watcher(config.read("fetch_colors"))
     if pause_watcher.value:
         msg = "Pause mode enabled" if pause_watcher.value else "Pause mode disabled"
         logging.warning(msg)
@@ -433,13 +432,6 @@ def main():
             first_run = False if first_run else True
             continue
 
-        #
-        #
-        #
-        # manually fetch the colors
-        fetch_watcher.set_value(config.read("fetch_colors"))
-        if fetch_watcher.has_changed():
-            print("Yeah")
         #
         #
         #
