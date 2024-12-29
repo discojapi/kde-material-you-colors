@@ -412,7 +412,6 @@ def main():
     logging.debug(config.options)
 
     while True:
-        print(config.read("manual_fetch"))
         config_modified.set_value(file_utils.get_file_sha1(config_file))
 
         # Get config from file and compare it with passed args

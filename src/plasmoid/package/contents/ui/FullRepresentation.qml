@@ -59,9 +59,10 @@ ColumnLayout {
 
     property bool pauseMode: false
 
+    property bool fetch_colors: false
+
     signal savePauseMode()
 
-    signal fetchColors()
 
     property Item parentMain
 
@@ -84,7 +85,6 @@ ColumnLayout {
             parentMain.pauseModeMain = fullRepresentation.pauseMode
         }
     }
-
 
     // Get a list of installed icon themes as id,name
     // - discard hidden themes
@@ -333,21 +333,6 @@ ColumnLayout {
                     level: 1
                     text: Plasmoid.metaData.name
                 }
-                // Button to manually fetch the colors on screen //
-                PlasmaComponents3.ToolButton {
-                    display: PlasmaComponents3.AbstractButton.IconOnly
-                    id: fetchBtn
-                    icon.name: 'refreshstructure'
-                    text: 'Manually fetch the colors'
-
-                    onClicked: {
-                        fetchColors()
-                    }
-                    PlasmaComponents3.ToolTip {
-                        text: parent.text
-                    }
-                }
-
                 PlasmaComponents3.ToolButton {
                     display: PlasmaComponents3.AbstractButton.IconOnly
                     visible: !onDesktop
@@ -362,7 +347,6 @@ ColumnLayout {
                         text: parent.text
                     }
                 }
-
                 PlasmaComponents3.ToolButton {
                     display: PlasmaComponents3.AbstractButton.IconOnly
                     checkable: false
@@ -457,6 +441,7 @@ ColumnLayout {
                         property string doSettingsReload: fullRepresentation.doSettingsReload
                         property bool showAdvanced: fullRepresentation.showAdvanced
                         property bool pauseMode: fullRepresentation.pauseMode
+                        property bool fetch_colors: fullRepresentation.fetch_colors
 
                         onDoSettingsReloadChanged: {
                             if (doSettingsReload) {
@@ -468,20 +453,12 @@ ColumnLayout {
                                 }
                             }
                         }
-
-                        Connections {
-                            target: fullRepresentation
-                            function onFetchColors() {
-                                settings.fetch_colors = 1
-                            }
-                        }
                         Connections {
                             target: fullRepresentation
                             function onSavePauseMode() {
                                 settings.pause_mode = fullRepresentation.pauseMode
                             }
                         }
-
                         onMaterialYouDataChanged: {
                             if (materialYouData!=null && materialYouDataString!=null) {
                                 if (JSON.stringify(materialYouData) !== materialYouDataString) {
@@ -772,6 +749,26 @@ ColumnLayout {
                                     }
                                 }
 
+                            }
+
+                            // Button to manually fetch the colors on screen //
+                            Timer {
+                                id: fetchTimer
+                                interval: fullRepresentation.main_loop_delay; running: false; repeat: false;
+                                onTriggered: settings.fetch_colors = 0
+                            }
+                            RowLayout {
+                                PlasmaComponents3.Button {
+                                    text: "Fetch colors"
+                                    icon.name: 'refreshstructure'
+                                    onClicked: {
+                                        settings.fetch_colors = 1
+                                        fetchTimer.start()
+                                    }
+                                    PlasmaComponents3.ToolTip {
+                                        text: "Manually fetch the colors on the current wallpaper"
+                                    }
+                                }
                             }
 
                             RowLayout {
