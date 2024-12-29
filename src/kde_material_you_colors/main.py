@@ -401,7 +401,10 @@ def main():
         logging.warning(msg)
     if wallpaper.type == "screenshot":
         head = "Screenshot mode enabled"
-        cont = f"Waiting {config.read('screenshot_delay')}s between updates"
+        if config.read("manual_fetch"):
+            cont = "Manual color fetch enabled, press 'Fetch colors' in the widget to take a new screenshot"
+        else:
+            cont = f"Waiting {config.read('screenshot_delay')}s between updates"
         notify.send_notification(head, cont)
         logging.warning("%s, %s", head, cont)
     if wallpaper.error:
@@ -447,6 +450,7 @@ def main():
         fetch_watcher.set_value(config.read("fetch_colors"))
         if fetch_watcher.has_changed() and fetch_watcher.value:
             logging.warning("Fetching colors in current wallpaper...")
+            counter = 0
 
         if not config.read("manual_fetch") or (fetch_watcher.has_changed() and fetch_watcher.value):
             wallpaper.update(config, skip_screenshot=counter != 0)
@@ -488,6 +492,7 @@ def main():
                 logging.info(f"{wallpaper}")
                 apply_themes.apply(config, wallpaper, light_mode_watcher.value)
                 apply = False
+                counter += 1
 
         if group1:
             if wallpaper.error:
@@ -497,9 +502,12 @@ def main():
                 logging.error(f"Could not get wallpaper {str(wallpaper.error)}")
             if plugin_watcher.changed and wallpaper.type == "screenshot":
                 head = "Screenshot mode enabled"
+            if config.read("manual_fetch"):
+                cont = "Manual color fetch enabled, press 'Fetch colors' in the widget to take a new screenshot"
+            else:
                 cont = f"Waiting {config.read('screenshot_delay')}s between updates"
-                notify.send_notification(head, cont)
-                logging.warning("%s, %s", head, cont)
+            notify.send_notification(head, cont)
+            logging.warning("%s, %s", head, cont)
             if wallpaper.source:
                 apply = True
 
@@ -510,7 +518,7 @@ def main():
             apply_themes.apply(config, wallpaper, light_mode_watcher.value)
             counter = 0
 
-        if wallpaper.is_screenshot():
+        if wallpaper.is_screenshot() and not config.read("manual_fetch"):
             if target_cycles > counter:
                 counter += 1
             else:
