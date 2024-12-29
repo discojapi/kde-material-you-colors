@@ -394,6 +394,8 @@ def main():
     plugin_watcher = utils.Watcher(wallpaper.plugin)
     source_watcher = utils.Watcher(wallpaper.source)
     pause_watcher = utils.Watcher(config.read("pause_mode"))
+    manual_fetch_watcher = utils.Watcher(config.read("manual_fetch"))
+    fetch_watcher = utils.Watcher(config.read("fetch_colors"))
     if pause_watcher.value:
         msg = "Pause mode enabled" if pause_watcher.value else "Pause mode disabled"
         logging.warning(msg)
@@ -435,9 +437,20 @@ def main():
         #
         #
         #
-        # update wallpaper
-        wallpaper.update(config, skip_screenshot=counter != 0)
-        wallpaper_watcher.set_value(wallpaper.current)
+        # update wallpaper, only if manual_fetch is false
+        manual_fetch_watcher.set_value(config.read("manual_fetch"))
+
+        if manual_fetch_watcher.has_changed():
+            msg = "Manual color fetch enabled." if manual_fetch_watcher.value else "Manual color fetch disabled."
+            logging.warning(msg)
+
+        fetch_watcher.set_value(config.read("fetch_colors"))
+        if fetch_watcher.has_changed() and fetch_watcher.value:
+            logging.warning("Fetching colors in current wallpaper...")
+
+        if not config.read("manual_fetch") or (fetch_watcher.has_changed() and fetch_watcher.value):
+            wallpaper.update(config, skip_screenshot=counter != 0)
+            wallpaper_watcher.set_value(wallpaper.current)
 
         target_cycles = config.read("screenshot_delay") / (
             config.read("main_loop_delay") or 1

@@ -59,7 +59,8 @@ ColumnLayout {
 
     property bool pauseMode: false
 
-    property bool fetch_colors: false
+    property bool manual_fetch: false
+
 
     signal savePauseMode()
 
@@ -766,11 +767,6 @@ ColumnLayout {
                                     }
                                     PlasmaComponents3.ToolTip {
                                         text: "Manually fetch the colors on the current wallpaper"
-                                    }
-                                }
-                                PlasmaComponents3.CheckBox {
-                                    onCheckedChanged: {
-                                        settings.fetch_colors = checked
                                     }
                                 }
                             }
@@ -1969,7 +1965,7 @@ ColumnLayout {
                                         id: manualFetchPopup
                                         x: parent.width / 2
                                         y: parent.height
-                                        text: "The backend won't fetch the colors in the delay times, instead, it will fetch only when the 'fetch colors' button is pressed by the user."
+                                        text: "The backend won't fetch the colors in the delay times, instead, it will fetch only when the 'Fetch colors' button is pressed by the user. Useful when using dynamic wallpapers."
                                     }
                                 }
                             }
