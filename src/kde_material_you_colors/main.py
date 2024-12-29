@@ -445,11 +445,11 @@ def main():
 
         if manual_fetch_watcher.has_changed():
             msg = "Manual color fetch enabled." if manual_fetch_watcher.value else "Manual color fetch disabled."
-            logging.warning(msg)
+            logging.info(msg)
 
         fetch_watcher.set_value(config.read("fetch_colors"))
         if fetch_watcher.has_changed() and fetch_watcher.value:
-            logging.warning("Fetching colors in current wallpaper...")
+            logging.info("Fetching colors in current wallpaper...")
             counter = 0
 
         if not config.read("manual_fetch") or (fetch_watcher.has_changed() and fetch_watcher.value):

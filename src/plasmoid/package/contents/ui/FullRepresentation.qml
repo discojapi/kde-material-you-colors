@@ -754,7 +754,7 @@ ColumnLayout {
                             // Button to manually fetch the colors on screen //
                             Timer {
                                 id: fetchTimer
-                                interval: settings.main_loop_delay * 1200; running: false; repeat: false;
+                                interval: settings.main_loop_delay * 1000; running: false; repeat: false;
                                 onTriggered: settings.fetch_colors = false
                             }
                             RowLayout {
