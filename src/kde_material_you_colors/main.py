@@ -502,12 +502,12 @@ def main():
                 logging.error(f"Could not get wallpaper {str(wallpaper.error)}")
             if plugin_watcher.changed and wallpaper.type == "screenshot":
                 head = "Screenshot mode enabled"
-            if config.read("manual_fetch"):
-                cont = "Manual color fetch enabled, press 'Fetch colors' in the widget to take a new screenshot"
-            else:
-                cont = f"Waiting {config.read('screenshot_delay')}s between updates"
-            notify.send_notification(head, cont)
-            logging.warning("%s, %s", head, cont)
+                if config.read("manual_fetch"):
+                    cont = "Manual color fetch enabled, press 'Fetch colors' in the widget to take a new screenshot"
+                else:
+                    cont = f"Waiting {config.read('screenshot_delay')}s between updates"
+                notify.send_notification(head, cont)
+                logging.warning("%s, %s", head, cont)
             if wallpaper.source:
                 apply = True
 
