@@ -331,6 +331,20 @@ ColumnLayout {
                     level: 1
                     text: Plasmoid.metaData.name
                 }
+                // Button to fetch the colors on screen //
+                PlasmaComponents3.ToolButton {
+                    display: PlasmaComponents3.AbstractButton.IconOnly
+                    visible: !onDesktop
+                    icon.name: 'refreshstructure'
+                    text: 'Manually fetch the colors'
+
+                    onClicked: {
+                        plasmoid.internalAction("configure").trigger()
+                    }
+                    PlasmaComponents3.ToolTip {
+                        text: parent.text
+                    }
+                }
 
                 PlasmaComponents3.ToolButton {
                     display: PlasmaComponents3.AbstractButton.IconOnly
